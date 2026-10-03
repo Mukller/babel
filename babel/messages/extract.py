@@ -713,17 +713,13 @@ def _parse_python_string(value: str, encoding: str, future_flags: int) -> str | 
             if isinstance(body.value, str):
                 return body.value
             if isinstance(body.value, bytes):
+                # A bytes literal used to propagate out of here and crash the
+                # extraction frontend (GH #1190). Warn rather than fail, and
+                # return None so the message is skipped.
                 warnings.warn(
                     f"Bytes literal {value!r} passed to a gettext function; "
                     "it will be skipped during message extraction. "
                     "Use a str literal instead.",
-                    SyntaxWarning,
-                    stacklevel=2,
-                )
-            elif not isinstance(body.value, (str, bytes)):
-                warnings.warn(
-                    f"Non-string value {value!r} passed to a gettext function; "
-                    "it will be skipped during message extraction.",
                     SyntaxWarning,
                     stacklevel=2,
                 )
